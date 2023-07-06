@@ -7,6 +7,7 @@ use App\Models\Kelas;
 use App\Models\Pengampu;
 use App\Models\Penjadwalan;
 use App\Models\Ruang;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PenjadwalanController extends Controller
@@ -97,65 +98,62 @@ class PenjadwalanController extends Controller
             3 => 'Rabu',
             4 => 'Kamis',
             5 => 'Jumat',
-            6 => 'Sabtu',
         ];
+        
+        $start_time = Carbon::parse('07:00')->format('H:i');
+        $end_time = Carbon::parse('20:20')->format('H:i');
 
-        $jam = Jam::orderBy('start_time', 'asc')->get();
+        // STATMENT KBM END TIME IN FRIDAY
+        $start_time_new = Carbon::parse('08:40')->format('H:i');
+        $end_time_new = Carbon::parse('09:30')->format('H:i');
 
-        // GENERATE HARI DAN JAM
-        $genereateWaktu = array();
-        foreach ($day as $key => $value) {
-            foreach ($jam as $key2 => $value2) {
-                $data_waktu = [
-                    'day' => $value,
-                    'start_time' => $value2->start_time,
-                    'end_time' => $value2->end_time,
-                    'matkul_id' => null,
-                    'dosen_id' => null,
-                    'kelas_id' => null,
-                    'ruang_id' => null,
-                ];
-
-                $genereateWaktu[] = $data_waktu;
-            }
-        }
-
-        // dd($genereateWaktu);
+        $sks_max = 16;
+        $sks_min = 2;
+        $waktu_per_sks = 50;
 
         // GENERATE JADWAL PENGAMPU
-        $pengampu = Pengampu::get();
-        $index_result_pengampu = 0;
-        $max_pengampu = count($pengampu) - 1;
-
-        // $kelas = Kelas::orderBy('nama_kelas', 'asc')->get();
-        // $index_result_kelas = 0;
-        // $max_kelas = count($kelas) - 1;
-        
+        $pengampu = Pengampu::InRandomOrder()->get();
         $genereateJadwal = array();
 
-        foreach ($genereateWaktu as $key => $value) {
-            $data_jadwal = [
-                'day' => $value['day'],
-                'start_time' => $value['start_time'],
-                'end_time' => $value['end_time'],
-                'matkul_id' => $pengampu[$index_result_pengampu]->matkul_id,
-                'dosen_id' => $pengampu[$index_result_pengampu]->dosen_id,
-                'kelas_id' => $pengampu[$index_result_pengampu]->kelas_id,
-                'ruang_id' => Ruang::where('kapasitas', '>=', $pengampu[$index_result_pengampu]->kelas->jumlah_mahasiswa)->first()->kode_ruang ?? null,
-            ];
-
-            $genereateJadwal[] = $data_jadwal;
-            if ($index_result_pengampu < $max_pengampu) {
-                $index_result_pengampu++;
-            }else {
-                $index_result_pengampu = 0;
+        foreach ($day as $key => $value) {
+            foreach ($pengampu as $key2 => $value2) {
+                if ($value != 'Jumat'){
+                    // STATMENT KBM END TIME
+                    if ($end_time >= $start_time) {
+                        $data_jadwal = [
+                            'day' => $value,
+                            'start_time' => Carbon::parse($start_time),
+                            'end_time' => Carbon::parse($start_time)->addMinutes($waktu_per_sks * $value2->matakuliah->sks),
+                            'matkul_id' => $value2->matkul_id,
+                            'dosen_id' => $value2->dosen_id,
+                            'kelas_id' => $value2->kelas_id,
+                            'ruang_id' => Ruang::where('kapasitas', '>=', $value2->kelas->jumlah_mahasiswa)->inRandomOrder()->first()->kode_ruang ?? null,
+                        ];
+            
+                        $start_time = Carbon::parse($start_time)->addMinutes($waktu_per_sks * $value2->matakuliah->sks)->format('H:i');
+    
+                        array_push($genereateJadwal, $data_jadwal);
+                    }
+                }else if($value == 'Jumat' && $value2->matakuliah->sks <= $sks_min){
+                    if ($end_time_new > $start_time_new) {
+                        $data_jadwal = [
+                            'day' => $value,
+                            'start_time' => Carbon::parse($start_time_new),
+                            'end_time' => Carbon::parse($start_time_new)->addMinutes($waktu_per_sks * $value2->matakuliah->sks),
+                            'matkul_id' => $value2->matkul_id,
+                            'dosen_id' => $value2->dosen_id,
+                            'kelas_id' => $value2->kelas_id,
+                            'ruang_id' => Ruang::where('kapasitas', '>=', $value2->kelas->jumlah_mahasiswa)->inRandomOrder()->first()->kode_ruang ?? null,
+                        ];
+            
+                        $start_time_new = Carbon::parse($start_time_new)->addMinutes($waktu_per_sks * $value2->matakuliah->sks)->format('H:i');
+    
+                        array_push($genereateJadwal, $data_jadwal);
+                    }
+                }
             }
 
-            // if ($index_result_kelas < $max_kelas) {
-            //     $index_result_kelas++;
-            // }else {
-            //     $index_result_kelas = 0;
-            // }
+            $start_time = Carbon::parse('07:00')->format('H:i');
         }
 
         // dd($genereateJadwal);
