@@ -15,9 +15,15 @@ class WaktuKhusus extends Model
     public $primaryKey = 'kode_waktukhusus';
     protected $fillable = [
         'kode_waktukhusus',
+        'kode_dosen',
         'day',
         'status',
         'start_time',
         'end_time',
     ];
+
+    public function dosen()
+    {
+        return $this->belongsTo(Dosen::class, 'kode_dosen', 'kode_dosen');
+    }
 }

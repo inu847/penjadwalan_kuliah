@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Dosen;
-use App\Models\Jam;
 use App\Models\WaktuKhusus;
 use Illuminate\Http\Request;
 
@@ -16,7 +14,7 @@ class WaktuKhususController extends Controller
      */
     public function index()
     {
-        $dosen = Dosen::orderBy('nama_dosen', 'asc')->get();
+        $semua_waktukhusus = WaktuKhusus::all();
         $day = [
             'Senin',
             'Selasa',
@@ -25,23 +23,26 @@ class WaktuKhususController extends Controller
             'Jumat',
             'Sabtu',
         ];
+        $status = [
+            1 => 'Tidak Hadir',
+            2 => 'Hadir',
+            3 => 'Libur',
+            4 => 'Cuti',
+            5 => 'Izin',
+            6 => 'Sakit',
+            7 => 'Alpa',
+            8 => 'Terlambat',
+            9 => 'Pulang Cepat',
+            10 => 'Lembur',
+            11 => 'Tugas Luar',
+            12 => 'Lainya',
+        ];
 
-        $jam = Jam::orderBy('start_time', 'asc')->get();
-        $waktu_khusus = [];
-        foreach ($jam as $key2 => $value2) {
-            foreach ($day as $key => $value) {
-                $data_waktu = [
-                    'day' => $value,
-                    'jam' => $value2->start_time . ' - ' . $value2->end_time,
-                    'start_time' => $value2->start_time,
-                    'end_time' => $value2->end_time,
-                ];
-
-                $waktu_khusus[] = $data_waktu;
-            }
+        foreach ($semua_waktukhusus as $key => $value) {
+            $value['status_name'] = $status[$value['status']];
         }
 
-        return view('dashboard.waktu_khusus.index', compact('dosen', 'day', 'waktu_khusus'));
+        return view('dashboard.waktu_khusus.index', compact('semua_waktukhusus', 'day', 'status'));
     }
 
     /**
@@ -64,19 +65,8 @@ class WaktuKhususController extends Controller
     {
         $data = $request->all();
 
-        $waktu_khusus_check = WaktuKhusus::where('kode_dosen', $data['kode_dosen'])
-            ->where('day', $data['day'])
-            ->where('start_time', $data['start_time'])
-            ->where('end_time', $data['end_time'])
-            ->first();
-        if ($waktu_khusus_check) {
-            // UPDATE STATUS
-            $waktu_khusus_check->update(['status' => $data['status']]);
-            return response()->json(['status' => 'error', 'message' => 'Data sudah ada!']);
-        }else{
-            WaktuKhusus::create($data);
-        }
-        return response()->json(['status' => 'success', 'message' => 'Data berhasil ditambahkan!']);
+        WaktuKhusus::create($data);
+        return redirect()->route('waktu_khusus.index');
     }
 
     /**
@@ -126,19 +116,5 @@ class WaktuKhususController extends Controller
     {
         $waktuKhusus->delete();
         return redirect()->route('waktu_khusus.index');
-    }
-
-    public function getDosenChecked(Request $request)
-    {
-        $data = $request->all();
-
-        // ORDER BY DAY AND START TIME
-        $waktu_khusus = WaktuKhusus::orderBy('day', 'asc')->orderBy('start_time', 'asc')->where('kode_dosen', $data['kode_dosen'])->get();
-
-        if ($waktu_khusus) {
-            return response()->json(['status' => 'success', 'data' => $waktu_khusus]);
-        }else{
-            return response()->json(['status' => 'error', 'message' => 'Data tidak ditemukan!']);
-        }
     }
 }

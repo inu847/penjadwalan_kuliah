@@ -38,9 +38,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('kelas', KelasController::class);
     Route::resource('matkul', MatkulController::class);
     Route::resource('pengampu', PengampuController::class);
+
     Route::resource('penjadwalan', PenjadwalanController::class);
+    // GENERATE PENJADWALAN
+    Route::post('penjadwalan/generate', [PenjadwalanController::class, 'generateJadwal'])->name('penjadwalan.generate');
+    Route::post('penjadwalan/clear-all', [PenjadwalanController::class, 'clearAll'])->name('penjadwalan.clearAll');
+
     Route::resource('ruang', RuangController::class);
     Route::resource('waktu_khusus', WaktuKhususController::class);
+    Route::get('getDosenChecked', [WaktuKhususController::class, 'getDosenChecked'])->name('waktu_khusus.getDosenChecked');
 });
 
 Auth::routes();
