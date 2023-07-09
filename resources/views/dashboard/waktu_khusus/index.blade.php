@@ -22,10 +22,10 @@
             </form>
         </div>
         <div class="col-lg-6">
-            <button type="button" class="btn btn-success" style="float: right;" data-bs-toggle="modal"
+            {{-- <button type="button" class="btn btn-success" style="float: right;" data-bs-toggle="modal"
                 data-bs-target="#createModal">
                 <i class="fa fa-plus"></i> Tambah Data
-            </button>
+            </button> --}}
         </div>
     </div>
     <br>

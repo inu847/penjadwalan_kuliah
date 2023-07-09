@@ -2,7 +2,7 @@ RULE
 1. 1 kelas dalam sehari max 3 matkul
 2. dosen mengajar minim 2x perhari dan max4
 3. ruangan 4 praktikum di ruangan praktikum dan teori masuk teori
-4. 
+4. login page diubah
 
 ###########################################################################
 
