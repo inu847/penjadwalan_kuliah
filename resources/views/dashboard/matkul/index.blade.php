@@ -7,7 +7,7 @@
 
     <div class="row">
         <div class="col-lg-6">
-            <form action="">
+            {{-- <form action="">
                 <div class="mb-3 w-50">
                     <select class="form-select" aria-label="Default select example">
                         <option selected>Pilih dosen</option>
@@ -16,7 +16,7 @@
                         @endforeach
                     </select>
                 </div>
-            </form>
+            </form> --}}
         </div>
 
 

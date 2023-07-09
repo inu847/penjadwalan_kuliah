@@ -1,3 +1,11 @@
+RULE
+1. 1 kelas dalam sehari max 3 matkul
+2. dosen mengajar minim 2x perhari dan max4
+3. ruangan 4 praktikum di ruangan praktikum dan teori masuk teori
+4. 
+
+###########################################################################
+
 Mas penjadwalan ini untuk semester genap ya (2,4,6) semester 8 enggak di jadwal soalnya cuma skripsi sama kkn. 
 
 Penjadwalan ini 1 kelas max 3 matkul, Dosen mengajar min 2 max 3. => masuk ke dalam validasi pembuatan dosen pengampu
