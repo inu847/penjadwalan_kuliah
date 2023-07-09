@@ -10,6 +10,10 @@ use App\Http\Controllers\PengampuController;
 use App\Http\Controllers\PenjadwalanController;
 use App\Http\Controllers\RuangController;
 use App\Http\Controllers\WaktuKhususController;
+use App\Models\Dosen;
+use App\Models\Kelas;
+use App\Models\Matkul;
+use App\Models\Ruang;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,7 +33,12 @@ Route::get('/', function () {
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', function () {
-        return view('dashboard.index');
+        $jumlah_dosen = Dosen::count();
+        $jumlah_matkul = Matkul::count();
+        $jumlah_ruang = Ruang::count();
+        $jumlah_kelas = Kelas::count();
+
+        return view('dashboard.index', compact('jumlah_dosen', 'jumlah_matkul', 'jumlah_ruang', 'jumlah_kelas'));
     });
     
     Route::resource('dosen', DosenController::class);

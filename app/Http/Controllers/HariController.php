@@ -20,7 +20,6 @@ class HariController extends Controller
             'Rabu',
             'Kamis',
             'Jumat',
-            'Sabtu',
         ];
         
         return view('dashboard.hari.index', compact('semua_hari'));
