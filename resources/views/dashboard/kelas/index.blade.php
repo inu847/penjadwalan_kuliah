@@ -110,7 +110,7 @@
         </div>
 
         {{-- Modal Hapus --}}
-        <div class="modal fade" id="hapus{{ $kelas->kode_kelas }}Modal" tabindex="-1"
+        <div id="table" class="modal fade" id="hapus{{ $kelas->kode_kelas }}Modal" tabindex="-1"
             aria-labelledby="hapus{{ $kelas->kode_kelas }}ModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">

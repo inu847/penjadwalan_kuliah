@@ -17,7 +17,7 @@
     <br>
 
     <!-- Modal Tambah -->
-    <div class="modal fade" id="pengampuModal" tabindex="-1" aria-labelledby="pengampuModalLabel" aria-hidden="true">
+    <div class="modal fade" id="pengampuModal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -28,8 +28,8 @@
                     <form action="{{ route('pengampu.store') }}" enctype="multipart/form-data" method="POST">
                         @csrf
                         <div class="mb-3">
-                            <label for="matkul_id" class="form-label">Mata Kuliah</label>
-                            <select name="matkul_id" id="matkul_id" class="form-control select2" required>
+                            <label for="matkul_id_create" class="form-label">Mata Kuliah</label>
+                            <select name="matkul_id" id="matkul_id_create" aria-label="Default select example" class="form-control select2" required>
                                 <option value="" selected disabled>Pilih Opsi</option>
                                 @foreach ($matakuliah as $item)
                                     <option value="{{ $item->id }}">{{ $item->nama_matkul }}</option>
@@ -56,7 +56,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="tahun_akademik" class="form-label">Tahun Akademik</label>
-                            <input type="text" class="form-control" id="tahun_akademik" name="tahun_akademik" required>
+                            <input type="number" class="form-control" id="tahun_akademik" name="tahun_akademik" required>
                         </div>
                 </div>
                 <div class="modal-footer">
@@ -69,7 +69,7 @@
     </div>
 
 
-    <table class="table table-striped table-hover">
+    <table id="table" class="table table-striped table-hover">
         <thead>
             <tr>
                 <th scope="col">No</th>
@@ -123,7 +123,6 @@
                             <div class="mb-3">
                                 <label for="matkul_id" class="form-label">Mata Kuliah</label>
                                 <select name="matkul_id" id="matkul_id" class="form-control select2" required>
-                                    <option value="" selected disabled>Pilih Opsi</option>
                                     @foreach ($matakuliah as $item)
                                         <option value="{{ $item->id }}" {{ ($pengampu->matkul_id == $item->id) ? 'selected' : '' }}>{{ $item->nama_matkul }}</option>
                                     @endforeach
@@ -149,7 +148,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="tahun_akademik" class="form-label">Tahun Akademik</label>
-                                <input type="text" name="tahun_akademik" class="form-control" id="tahun_akademik"
+                                <input type="number" name="tahun_akademik" class="form-control" id="tahun_akademik"
                                     value="{{ $pengampu->tahun_akademik }}" required>
                             </div>
                     </div>

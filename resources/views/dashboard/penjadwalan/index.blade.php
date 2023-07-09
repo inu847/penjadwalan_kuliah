@@ -26,7 +26,7 @@
     </div>
     <br>
 
-    <table class="table table-striped table-hover">
+    <table id="table" class="table table-striped table-hover">
         <thead>
             <tr>
                 <th scope="col">No</th>

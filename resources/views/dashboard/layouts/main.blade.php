@@ -14,18 +14,19 @@
         integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
 
     <!-- Custom fonts for this template-->
-    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="{{ asset('vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
     <!-- Custom styles for this template-->
-    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
+    <link href="{{ asset('css/sb-admin-2.min.css')}}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/style.css')}}">
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('css/select2.min.css')}}">
     <link rel="stylesheet" href="{{ asset('select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.css" />
 </head>
 
 <body id="page-top">
@@ -95,26 +96,33 @@
             <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
             <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
             <!-- Bootstrap core JavaScript-->
-            <script src="/vendor/jquery/jquery.min.js"></script>
+            <script src="{{ asset('vendor/jquery/jquery.min.js')}}"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous">
             </script>
 
             <!-- Core plugin JavaScript-->
-            <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+            <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js')}}"></script>
 
             <!-- Custom scripts for all pages-->
-            <script src="/js/sb-admin-2.min.js"></script>
+            <script src="{{ asset('js/sb-admin-2.min.js')}}"></script>
 
             <!-- Page level plugins -->
-            <script src="/vendor/chart.js/Chart.min.js"></script>
+            <script src="{{ asset('vendor/chart.js/Chart.min.js')}}"></script>
 
             <!-- Page level custom scripts -->
-            <script src="/js/demo/chart-area-demo.js"></script>
-            <script src="/js/demo/chart-pie-demo.js"></script>
-            <script src="{{ asset('js/select2.full.min.js')}}"></script>
-            <script>
+            <script src="{{ asset('js/demo/chart-area-demo.js')}}"></script>
+            <script src="{{ asset('js/demo/chart-pie-demo.js')}}"></script>
+            <script src="{{ asset('js/select2.full.min.js')}}"></script>  
+            <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.js"></script>
+            {{-- <script>
                 $('.select2').select2()
+            </script> --}}
+            {{-- DATATABLE --}}
+            <script>
+                $(document).ready(function () {
+                    $('#table').DataTable();
+                });
             </script>
 </body>
 
