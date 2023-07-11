@@ -189,11 +189,12 @@ class PenjadwalanController extends Controller
 
                     $start_time = Carbon::parse($start_time)->addMinutes($waktu_per_sks * $value2->matakuliah->sks)->format('H:i');
                     $start_time_new = Carbon::parse($start_time_new)->addMinutes($waktu_per_sks * $value2->matakuliah->sks)->format('H:i');
-                }
-                if ($index_pengampu >= $max_index_pengampu) {
-                    $index_pengampu = 0;
-                }else{
-                    $index_pengampu++;
+                    
+                    if ($index_pengampu >= $max_index_pengampu) {
+                        break;
+                    }else{
+                        $index_pengampu++;
+                    }
                 }
 
                 if ($index_ruang >= $max_index_ruang) {
