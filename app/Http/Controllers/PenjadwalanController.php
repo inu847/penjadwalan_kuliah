@@ -131,10 +131,7 @@ class PenjadwalanController extends Controller
             $ruang_sesuai = Ruang::where('jenis', $jenis_matkul)->get();
             $max_index_ruang = count($ruang_sesuai) - 1;
 
-            foreach ($pengampu as $key2 => $value2) {
-                $start_time_update = Carbon::parse($start_time);
-                $end_time_update = Carbon::parse($start_time)->addMinutes($waktu_per_sks * $pengampu[$index_pengampu]->matakuliah->sks);
-                
+            foreach ($pengampu as $key2 => $value2) {                
                 if ($pengampu[$index_pengampu]->kode_kelas == $kelas_now){
                     $count_kelas_now++;
                 }else{
@@ -143,6 +140,14 @@ class PenjadwalanController extends Controller
                 }
 
                 if ($count_kelas_now > $max_kelas_per_hari) {
+                    // CHECK IF TIME > END TIME RESET ON START TIME
+                    if ($start_time >= $end_time) {
+                        $start_time = Carbon::parse('07:00')->format('H:i');
+                    }
+                    
+                    $start_time_update = Carbon::parse($start_time);
+                    $end_time_update = Carbon::parse($start_time)->addMinutes($waktu_per_sks * $pengampu[$index_pengampu]->matakuliah->sks);
+
                     if ($pengampu[$index_pengampu]->matakuliah->jenis == 'Praktikum') {
                         $jenis_matkul_update = $pengampu[$index_pengampu]->matakuliah->jenis;
                         $ruang_sesuai[$index_ruang] = Ruang::where('jenis', $jenis_matkul_update)->InRandomOrder()->first();
@@ -179,6 +184,9 @@ class PenjadwalanController extends Controller
                             $genereateJadwal[] = $data_jadwal;
                         }
                     }
+
+                    $start_time = Carbon::parse($start_time)->addMinutes($waktu_per_sks * $value2->matakuliah->sks)->format('H:i');
+                    $start_time_new = Carbon::parse($start_time_new)->addMinutes($waktu_per_sks * $value2->matakuliah->sks)->format('H:i');
                 }
                 if ($index_pengampu >= $max_index_pengampu) {
                     $index_pengampu = 0;
@@ -191,12 +199,8 @@ class PenjadwalanController extends Controller
                 }else{
                     $index_ruang++;
                 }
-                
-                $start_time = Carbon::parse($start_time)->addMinutes($waktu_per_sks * $value2->matakuliah->sks)->format('H:i');
-                $start_time_new = Carbon::parse($start_time_new)->addMinutes($waktu_per_sks * $value2->matakuliah->sks)->format('H:i');
             }
-
-
+            
             $start_time = Carbon::parse('07:00')->format('H:i');
         }
 
