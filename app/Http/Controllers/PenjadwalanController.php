@@ -143,6 +143,10 @@ class PenjadwalanController extends Controller
                 }
 
                 if ($count_kelas_now > $max_kelas_per_hari) {
+                    if ($pengampu[$index_pengampu]->matakuliah->jenis == 'Praktikum') {
+                        $jenis_matkul_update = $pengampu[$index_pengampu]->matakuliah->jenis;
+                        $ruang_sesuai[$index_ruang] = Ruang::where('jenis', $jenis_matkul_update)->InRandomOrder()->first();
+                    }
                     if ($value != 'Jumat'){
                         // STATMENT KBM END TIME
                         if ($end_time >= $start_time) {
