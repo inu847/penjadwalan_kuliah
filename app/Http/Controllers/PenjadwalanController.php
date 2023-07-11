@@ -144,14 +144,16 @@ class PenjadwalanController extends Controller
                     if ($start_time >= $end_time) {
                         $start_time = Carbon::parse('07:00')->format('H:i');
                     }
-                    
+
                     $start_time_update = Carbon::parse($start_time);
                     $end_time_update = Carbon::parse($start_time)->addMinutes($waktu_per_sks * $pengampu[$index_pengampu]->matakuliah->sks);
 
                     if ($pengampu[$index_pengampu]->matakuliah->jenis == 'Praktikum') {
-                        $jenis_matkul_update = $pengampu[$index_pengampu]->matakuliah->jenis;
-                        $ruang_sesuai[$index_ruang] = Ruang::where('jenis', $jenis_matkul_update)->InRandomOrder()->first();
+                        $ruang_sesuai_update = Ruang::where('jenis', 'Praktikum')->InRandomOrder()->first();
+                    }else{
+                        $ruang_sesuai_update = $ruang_sesuai[$index_ruang];
                     }
+
                     if ($value != 'Jumat'){
                         // STATMENT KBM END TIME
                         if ($end_time >= $start_time) {
@@ -162,7 +164,7 @@ class PenjadwalanController extends Controller
                                 'matkul_id' => $pengampu[$index_pengampu]->matkul_id,
                                 'dosen_id' => $pengampu[$index_pengampu]->dosen_id,
                                 'kelas_id' => $pengampu[$index_pengampu]->kelas_id,
-                                'ruang_id' => $ruang_sesuai[$index_ruang]->kode_ruang,
+                                'ruang_id' => $ruang_sesuai_update->kode_ruang,
                             ];
     
                             $kelas_now++;
@@ -178,7 +180,7 @@ class PenjadwalanController extends Controller
                                 'matkul_id' => $pengampu[$index_pengampu]->matkul_id,
                                 'dosen_id' => $pengampu[$index_pengampu]->dosen_id,
                                 'kelas_id' => $pengampu[$index_pengampu]->kelas_id,
-                                'ruang_id' => $ruang_sesuai[$index_ruang]->kode_ruang,
+                                'ruang_id' => $ruang_sesuai_update->kode_ruang,
                             ];
         
                             $genereateJadwal[] = $data_jadwal;
