@@ -52,7 +52,7 @@
                     <td>{{ $penjadwalan->matkul->semester ?? null }}</td>
                     <td>{{ $penjadwalan->kelas->nama_kelas ?? null }}</td>
                     <td>{{ $penjadwalan->dosen->nama_dosen ?? null }}</td>
-                    <td>{{ $penjadwalan->ruang->nama_ruang }}</td>
+                    <td>{{ $penjadwalan->ruang->nama_ruang ?? null }}</td>
                 </tr>
                 <?php $count++; ?>
             @endforeach

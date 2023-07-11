@@ -62,11 +62,11 @@
             <span>Hari</span></a>
     </li>
 
-    <li class="nav-item">
+    {{-- <li class="nav-item">
         <a class="nav-link" href="{{ route('waktu_khusus.index') }}">
             <i class="fas fa-calendar-week"></i>
             <span>Waktu Khusus</span></a>
-    </li>
+    </li> --}}
 
     <li class="nav-item">
         <a class="nav-link" href="{{ route('penjadwalan.index') }}">

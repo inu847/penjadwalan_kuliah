@@ -92,7 +92,7 @@
                             <div class="mb-3">
                                 <label for="nidn" class="form-label">NIDN</label>
                                 <input type="number" name="nidn" class="form-control" id="nidn"
-                                    value="{{ $dosen->nidn }}" required>
+                                    value="{{ $dosen->nidn }}" disabled>
                             </div>
                             <div class="mb-3">
                                 <label for="nama_dosen" class="form-label">Nama Dosen</label>

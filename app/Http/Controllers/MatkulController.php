@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Matkul;
+use App\Models\Pengampu;
 use Illuminate\Http\Request;
 
 class MatkulController extends Controller
@@ -88,6 +89,8 @@ class MatkulController extends Controller
     public function destroy(Matkul $matkul)
     {
         $matkul->delete();
+        
+        Pengampu::where('matkul_id', $matkul->id)->delete();
         return redirect()->route('matkul.index');
     }
 }
