@@ -128,7 +128,7 @@ class PenjadwalanController extends Controller
         foreach ($day as $key => $value) {
             // RUANG
             $jenis_matkul = $pengampu[$index_pengampu]->matakuliah->jenis;
-            $ruang_sesuai = Ruang::where('jenis', $jenis_matkul)->get();
+            $ruang_sesuai = Ruang::whereNotIn('jenis', ['Praktikum'])->get();
             $max_index_ruang = count($ruang_sesuai) - 1;
 
             foreach ($pengampu as $key2 => $value2) {                
