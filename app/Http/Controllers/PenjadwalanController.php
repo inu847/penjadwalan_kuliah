@@ -103,9 +103,12 @@ class PenjadwalanController extends Controller
         $start_time = Carbon::parse('07:00')->format('H:i');
         $end_time = Carbon::parse('20:20')->format('H:i');
 
-        // STATMENT KBM END TIME IN FRIDAY
+        // STATMENT KBM END TIME NEW
         $start_time_new = Carbon::parse('08:40')->format('H:i');
         $end_time_new = Carbon::parse('09:30')->format('H:i');
+
+        $start_time_friday = Carbon::parse('08:40')->format('H:i');
+        $end_time_friday = Carbon::parse('09:30')->format('H:i');
 
         $sks_max = 16;
         $sks_min = 2;
@@ -130,7 +133,11 @@ class PenjadwalanController extends Controller
             $jenis_matkul = $pengampu[$index_pengampu]->matakuliah->jenis;
             $ruang_sesuai = Ruang::whereNotIn('jenis', ['Praktikum'])->get();
             $max_index_ruang = count($ruang_sesuai) - 1;
-
+            // IF FRIDAY FIRST TIME UPDATE TIME
+            if ($value == 'Jumat') {
+                $start_time = $start_time_friday;
+                $end_time = $end_time_friday;
+            }
             foreach ($pengampu as $key2 => $value2) {                
                 if ($pengampu[$index_pengampu]->kode_kelas == $kelas_now){
                     $count_kelas_now++;
