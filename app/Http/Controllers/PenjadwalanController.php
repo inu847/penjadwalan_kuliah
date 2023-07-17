@@ -157,7 +157,8 @@ class PenjadwalanController extends Controller
         $waktu_per_sks = 50;
 
         // GENERATE JADWAL PENGAMPU
-        $pengampu = $this->generatePengampu();
+        // $pengampu = $this->generatePengampu();
+        $pengampu = Pengampu::InRandomOrder()->get();
         $ruang = Ruang::get();
         $kelas = Kelas::get();
         $genereateJadwal = array();
