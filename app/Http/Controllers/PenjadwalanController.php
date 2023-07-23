@@ -94,7 +94,7 @@ class PenjadwalanController extends Controller
     {
         $pengampu = Pengampu::get()->groupBy('dosen_id');
         $min_dosen_per_hari = 2;
-        $max_dosen_per_hari = 4;
+        $max_dosen_per_hari = 3;
         
         $result = [];
         $dosen_over = [];
@@ -157,8 +157,8 @@ class PenjadwalanController extends Controller
         $end_time = Carbon::parse('20:20')->format('H:i');
 
         // STATMENT KBM END TIME NEW
-        $start_time_new = Carbon::parse('08:40')->format('H:i');
-        $end_time_new = Carbon::parse('09:30')->format('H:i');
+        $start_time_new = Carbon::parse('07:00')->format('H:i');
+        $end_time_new = Carbon::parse('20:20')->format('H:i');
 
         $start_time_friday = Carbon::parse('08:40')->format('H:i');
         $end_time_friday = Carbon::parse('09:30')->format('H:i');
@@ -174,97 +174,86 @@ class PenjadwalanController extends Controller
         $kelas = Kelas::get();
         $genereateJadwal = array();
         $index_pengampu = 0;
-        $max_index_pengampu = count($pengampu) - 1;
+        $index_day = 1;
+        $max_index_day = count($day);
         $max_kelas_per_hari = 3;
         $index_ruang = 0;
         $kelas_now = '';
         $count_kelas_now = 0;
 
         // MINIMAL DOSEN PER HARI
-        foreach ($day as $key => $value) {
+        foreach ($pengampu as $key => $value2) {
             // RUANG
-            $jenis_matkul = $pengampu[$index_pengampu]->matakuliah->jenis;
+            $jenis_matkul = $value2->matakuliah->jenis;
             $ruang_sesuai = Ruang::whereNotIn('jenis', ['Praktikum'])->get();
             $max_index_ruang = count($ruang_sesuai) - 1;
-            // IF FRIDAY FIRST TIME UPDATE TIME
-            if ($value == 'Jumat') {
-                $start_time = $start_time_friday;
-                $end_time = $end_time_friday;
+            
+            if ($value2->kode_kelas == $kelas_now){
+                $count_kelas_now++;
+            }else{
+                $kelas_now = $value2->kode_kelas;
+                $count_kelas_now = 1;
             }
-            foreach ($pengampu as $key2 => $value2) {     
-                if ($pengampu[$index_pengampu]->kode_kelas == $kelas_now){
-                    $count_kelas_now++;
-                }else{
-                    $kelas_now = $pengampu[$index_pengampu]->kode_kelas;
-                    $count_kelas_now = 1;
-                }
-                
-                if ($count_kelas_now > $max_kelas_per_hari) {
-                    // CHECK IF TIME > END TIME RESET ON START TIME
-                    if ($start_time >= $end_time) {
-                        $start_time = Carbon::parse('07:00')->format('H:i');
-                    }
 
-                    $start_time_update = Carbon::parse($start_time);
-                    $end_time_update = Carbon::parse($start_time)->addMinutes($waktu_per_sks * $pengampu[$index_pengampu]->matakuliah->sks);
-
-                    if ($pengampu[$index_pengampu]->matakuliah->jenis == 'Praktikum') {
-                        $ruang_sesuai_update = Ruang::where('jenis', 'Praktikum')->InRandomOrder()->first();
-                    }else{
-                        $ruang_sesuai_update = $ruang_sesuai[$index_ruang];
-                    }
-
-                    if ($value != 'Jumat'){
-                        // STATMENT KBM END TIME
-                        if ($end_time >= $start_time) {
-                            $data_jadwal = [
-                                'day' => $value,
-                                'start_time' => $start_time_update,
-                                'end_time' => $end_time_update,
-                                'matkul_id' => $pengampu[$index_pengampu]->matkul_id,
-                                'dosen_id' => $pengampu[$index_pengampu]->dosen_id,
-                                'kelas_id' => $pengampu[$index_pengampu]->kelas_id,
-                                'ruang_id' => $ruang_sesuai_update->kode_ruang,
-                            ];
-    
-                            $kelas_now++;
-        
-                            $genereateJadwal[] = $data_jadwal;
-                        }
-                    }else if($value == 'Jumat' && $pengampu[$index_pengampu]->matakuliah->sks <= $sks_min){
-                        if ($end_time_new > $start_time_new && $max_kelas_per_hari >= $kelas_now) {
-                            $data_jadwal = [
-                                'day' => $value,
-                                'start_time' => $start_time_update,
-                                'end_time' => $end_time_update,
-                                'matkul_id' => $pengampu[$index_pengampu]->matkul_id,
-                                'dosen_id' => $pengampu[$index_pengampu]->dosen_id,
-                                'kelas_id' => $pengampu[$index_pengampu]->kelas_id,
-                                'ruang_id' => $ruang_sesuai_update->kode_ruang,
-                            ];
-        
-                            $genereateJadwal[] = $data_jadwal;
-                        }
-                    }
-
-                    $start_time = Carbon::parse($start_time)->addMinutes($waktu_per_sks * $value2->matakuliah->sks)->format('H:i');
-                    $start_time_new = Carbon::parse($start_time_new)->addMinutes($waktu_per_sks * $value2->matakuliah->sks)->format('H:i');
-                    
-                    if ($index_pengampu >= $max_index_pengampu) {
-                        break;
-                    }else{
-                        $index_pengampu++;
-                    }
-                }
-
-                if ($index_ruang >= $max_index_ruang) {
-                    $index_ruang = 0;
-                }else{
-                    $index_ruang++;
-                }
+            // CHECK IF TIME > END TIME RESET ON START TIME
+            if ($start_time >= $end_time) {
+                $start_time = Carbon::parse('07:00')->format('H:i');
+                $index_day++;
             }
             
-            $start_time = Carbon::parse('07:00')->format('H:i');
+            // IF FRIDAY FIRST TIME UPDATE TIME
+            if ($day[$index_day] == 'Kamis' && $start_time >= $end_time) {
+                $start_time = $start_time_friday;
+                $end_time = $end_time_friday;
+                $index_day++;
+            }
+            
+            $start_time_update = Carbon::parse($start_time);
+            $end_time_update = Carbon::parse($start_time)->addMinutes($waktu_per_sks * $value2->matakuliah->sks);
+
+            if ($value2->matakuliah->jenis == 'Praktikum') {
+                $ruang_sesuai_update = Ruang::where('jenis', 'Praktikum')->InRandomOrder()->first();
+            }else{
+                $ruang_sesuai_update = $ruang_sesuai[$index_ruang];
+            }
+
+            // STATMENT KBM END TIME
+            if ($end_time >= $start_time) {
+                // JIKA HARI JUMAT PILIH MAPEL DENGAN SKS 2 JIKA LEBIH MAKA PINDAHKAN INDEX PENGAMPU SEKARANG KE BAGIAN AKHIR
+                // if ($day[$index_day] == 'Jumat') {
+                //     if ($value2->matakuliah->sks > 2) {
+                //         $pengampu->push($pengampu[$index_pengampu]);
+                //         $pengampu->forget($index_pengampu);
+                //         $index_pengampu = 0;
+                //         continue;
+                //     }
+                // }
+                $data_jadwal = [
+                    'day' => $day[$index_day],
+                    'start_time' => $start_time_update,
+                    'end_time' => $end_time_update,
+                    'matkul_id' => $value2->matkul_id,
+                    'dosen_id' => $value2->dosen_id,
+                    'kelas_id' => $value2->kelas_id,
+                    'ruang_id' => $ruang_sesuai_update->kode_ruang,
+                ];
+
+                $kelas_now++;
+                $genereateJadwal[] = $data_jadwal;
+            }
+
+            $start_time = Carbon::parse($start_time)->addMinutes($waktu_per_sks * $value2->matakuliah->sks)->format('H:i');
+            $start_time_new = Carbon::parse($start_time_new)->addMinutes($waktu_per_sks * $value2->matakuliah->sks)->format('H:i');
+
+            if ($index_ruang >= $max_index_ruang) {
+                $index_ruang = 0;
+            }else{
+                $index_ruang++;
+            }
+
+            if ($index_day >= $max_index_day) {
+                $index_day = 1;
+            }
         }
 
         // dd($genereateJadwal);
