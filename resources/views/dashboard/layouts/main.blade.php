@@ -41,8 +41,13 @@
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 
-            <!-- Main Content -->
-            <div id="content">
+            @if (Request::is('dashboard'))
+                <!-- Main Content -->
+                <div id="content" style="max-height: 800px;height: 100%;">
+            @else
+                <!-- Main Content -->
+                <div id="content">
+            @endif
 
                 <!-- Topbar -->
                 @include('dashboard.layouts.header')

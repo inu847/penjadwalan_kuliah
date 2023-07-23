@@ -106,9 +106,11 @@ class PenjadwalanController extends Controller
             $check_pembagian_dosen_pengampu = Pengampu::where('dosen_id', $value2->dosen_id)->count();
             // BAGI DOSEN PENGAMPU KE BEBERAPA HARI DENGAN MIN 2 MAX 4 PER HARI
             // JIKA HASIL PEMBAGIAN KURANG DARI SAMA DENGAN 1 MAKA KURANGI PEMBAGIAN -1
+            $count_hari = count($day);
             for ($i=0; $i < count($day); $i++) { 
                 if ($check_pembagian_dosen_pengampu <= 1) {
-                    $check_pembagian_dosen_pengampu = $check_pembagian_dosen_pengampu - (count($day) - 1);
+                    $count_hari = $count_hari - 1;
+                    $check_pembagian_dosen_pengampu = $check_pembagian_dosen_pengampu - ($count_hari);
                     // TAMBAHKAN PENGAMPU PADA INDEX TERAKHIR
                     $pengampu->push($value2);
                     // LANJUTKAN LOOPING SELANJUTNYA
@@ -157,8 +159,8 @@ class PenjadwalanController extends Controller
         $waktu_per_sks = 50;
 
         // GENERATE JADWAL PENGAMPU
-        // $pengampu = $this->generatePengampu();
-        $pengampu = Pengampu::InRandomOrder()->get();
+        $pengampu = $this->generatePengampu();
+        // $pengampu = Pengampu::InRandomOrder()->get();
         $ruang = Ruang::get();
         $kelas = Kelas::get();
         $genereateJadwal = array();
@@ -171,6 +173,7 @@ class PenjadwalanController extends Controller
         $kelas_now = '';
         $count_kelas_now = 0;
 
+        // MINIMAL DOSEN PER HARI
         foreach ($day as $key => $value) {
             // RUANG
             $jenis_matkul = $pengampu[$index_pengampu]->matakuliah->jenis;
@@ -188,7 +191,7 @@ class PenjadwalanController extends Controller
                     $kelas_now = $pengampu[$index_pengampu]->kode_kelas;
                     $count_kelas_now = 1;
                 }
-
+                
                 if ($count_kelas_now > $max_kelas_per_hari) {
                     // CHECK IF TIME > END TIME RESET ON START TIME
                     if ($start_time >= $end_time) {
