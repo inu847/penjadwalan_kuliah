@@ -92,45 +92,54 @@ class PenjadwalanController extends Controller
 
     public function generatePengampu()
     {
-        $pengampu = Pengampu::InRandomOrder()->get();
-        $day = [
-            1 => 'Senin',
-            2 => 'Selasa',
-            3 => 'Rabu',
-            4 => 'Kamis',
-            5 => 'Jumat',
-        ];
+        $pengampu = Pengampu::get()->groupBy('dosen_id');
+        $min_dosen_per_hari = 2;
+        $max_dosen_per_hari = 4;
+        
+        $result = [];
+        $dosen_over = [];
+        
+        // dd($pengampu);
 
-        foreach ($pengampu as $key => $value2) {
-            // HITUNG JUMLAH PENGAMPU PADA DOSEN
-            $check_pembagian_dosen_pengampu = Pengampu::where('dosen_id', $value2->dosen_id)->count();
-            // BAGI DOSEN PENGAMPU KE BEBERAPA HARI DENGAN MIN 2 MAX 4 PER HARI
-            // JIKA HASIL PEMBAGIAN KURANG DARI SAMA DENGAN 1 MAKA KURANGI PEMBAGIAN -1
-            $count_hari = count($day);
-            for ($i=0; $i < count($day); $i++) { 
-                if ($check_pembagian_dosen_pengampu <= 1) {
-                    $count_hari = $count_hari - 1;
-                    $check_pembagian_dosen_pengampu = $check_pembagian_dosen_pengampu - ($count_hari);
-                    // TAMBAHKAN PENGAMPU PADA INDEX TERAKHIR
-                    $pengampu->push($value2);
-                    // LANJUTKAN LOOPING SELANJUTNYA
-                    continue;
+        // JIKA DATA DOSEN MELEBIHI MAX DOSEN PER HARI MAKA TAMBAHKAN ARRAY DENGAN INDEX YANG BERBEDA PADA AKHIR ARRAY
+        foreach ($pengampu as $key => $value) {
+            if (count($value) > $max_dosen_per_hari) {
+                $dosen_over[] = $value;
+                unset($pengampu[$key]);
+            }
+        }
+
+        // dd($pengampu);
+        // TAMBAHKAN DOSEN OVER KE DALAM ARRAY PENGAMPU DENGAN MAKSIMAL INDEX SETELAHNYA
+        foreach ($dosen_over as $key => $value) {
+            // JIKA HASIL BAGI DOSEN_ID GENAP MAKA BAGI SESUAI DENGAN MAX DOSEN PER HARI
+            if ($key % 2 == 0) {
+                // DAPATKAN JUMLAH BANYAK DATANYA JIKA MELEBIHI BATAS MAKA BAGI SESUAI DENGAN MAX DOSEN PER HARI DENGAN LOOPING SAMPAI DATA HABIS
+                $count = count($value);
+                $index = 0;
+                while ($count > 0) {
+                    $pengampu[] = $value->slice($index, $max_dosen_per_hari);
+                    $index += $max_dosen_per_hari;
+                    $count -= $max_dosen_per_hari;
+                }
+            }else{
+                // DAPATKAN JUMLAH BANYAK DATANYA JIKA MELEBIHI BATAS MAKA BAGI SESUAI DENGAN MAX DOSEN PER HARI DENGAN LOOPING SAMPAI DATA HABIS
+                $count = count($value);
+                $index = 0;
+                while ($count > 0) {
+                    $pengampu[] = $value->slice($index, $min_dosen_per_hari);
+                    $index += $min_dosen_per_hari;
+                    $count -= $min_dosen_per_hari;
                 }
             }
         }
+
         // dd($pengampu);
-        // CHECK JIKA PENGAPU DOSEN SAMA ADA 3 MAKA LETAKKAN PADA AWAL ARRAY DAN HAPUS SEBELUMNYA
-        // foreach ($pengampu as $key => $value) {
-        //     $check_pengampu_dosen = Pengampu::where('dosen_id', $value->dosen_id)->count();
-        //     if ($check_pengampu_dosen == 3) {
-        //         $pengampu->prepend($value);
-        //         $pengampu->forget($key + 1);
-        //     }
-        // }
-        // // dd($pengampu);
-        // // DEFINISI ULANG INDEX BERURUT PADA ARRAY
-        // $pengampu = $pengampu->values()->all();
-        
+        // BUAT DATA PENGAMPU MENJADI RANDOM
+        $pengampu = $pengampu->shuffle();
+        // BUAT DATA MENJADI ARRAY 1 DIMENSION
+        $pengampu = $pengampu->flatten();
+        // dd($pengampu->pluck('dosen_id'));
         return $pengampu;
     }
 
@@ -167,8 +176,6 @@ class PenjadwalanController extends Controller
         $index_pengampu = 0;
         $max_index_pengampu = count($pengampu) - 1;
         $max_kelas_per_hari = 3;
-        $min_dosen_per_hari = 2;
-        $max_dosen_per_hari = 4;
         $index_ruang = 0;
         $kelas_now = '';
         $count_kelas_now = 0;
