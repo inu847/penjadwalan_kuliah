@@ -202,10 +202,9 @@ class PenjadwalanController extends Controller
             }
             
             // IF FRIDAY FIRST TIME UPDATE TIME
-            if ($day[$index_day] == 'Kamis' && $start_time >= $end_time) {
+            if ($index_day == 5 && $count_kelas_now == 1) {
                 $start_time = $start_time_friday;
                 $end_time = $end_time_friday;
-                $index_day++;
             }
             
             $start_time_update = Carbon::parse($start_time);
