@@ -219,15 +219,13 @@ class PenjadwalanController extends Controller
 
             // STATMENT KBM END TIME
             if ($end_time >= $start_time) {
-                // JIKA HARI JUMAT PILIH MAPEL DENGAN SKS 2 JIKA LEBIH MAKA PINDAHKAN INDEX PENGAMPU SEKARANG KE BAGIAN AKHIR
-                // if ($day[$index_day] == 'Jumat') {
-                //     if ($value2->matakuliah->sks > 2) {
-                //         $pengampu->push($pengampu[$index_pengampu]);
-                //         $pengampu->forget($index_pengampu);
-                //         $index_pengampu = 0;
-                //         continue;
-                //     }
-                // }
+                // JIKA DALAM 1 HARI KELAS > MAX KELAS PER HARI MAKA HAPUS PENGAMPU INDEX SEKARANG  DAN TAMBAHKAN KE INDEX TERAKHIR
+                if ($count_kelas_now >= $max_kelas_per_hari) {
+                    $pengampu->push($value2);
+                    $pengampu->forget($key);
+                    continue;
+                }
+
                 $data_jadwal = [
                     'day' => $day[$index_day],
                     'start_time' => $start_time_update,
