@@ -279,7 +279,7 @@ class PenjadwalanController extends Controller
                 }
             }
 
-            if ($count_kelas_now >= $max_kelas_per_hari) {
+            if ($count_kelas_now > $max_kelas_per_hari) {
                 $pengampu->push($value);
                 $pengampu->forget($key);
             }
