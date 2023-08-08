@@ -254,20 +254,6 @@ class PenjadwalanController extends Controller
             }
         }
 
-        // VALIDASI ULANG JIKA HARI SAMA, DIJAM MULAI YANG SAMA DAN RUANG SAMA MAKA GANTI RUANGAN YANG TIDAK SAMA 
-        foreach ($genereateJadwal as $key => $value) {
-            foreach ($genereateJadwal as $key2 => $value2) {
-                if ($key != $key2) {
-                    if ($value['day'] == $value2['day'] && $value['start_time'] == $value2['start_time'] && $value['ruang_id'] == $value2['ruang_id']) {
-                        // DAPATKAN RUANGAN DI HARI YANG SAMA
-                        $ruang_not_available = collect($genereateJadwal)->where('day', $value['day'])->where('start_time', $value['start_time'])->where('ruang_id', '!=', $value['ruang_id'])->pluck('ruang_id')->toArray();
-                        $ruang_sesuai_update = Ruang::whereNotIn('kode_ruang', $ruang_not_available)->InRandomOrder()->first();
-                        $genereateJadwal[$key2]['ruang_id'] = $ruang_sesuai_update->kode_ruang;
-                    }
-                }
-            }
-        }
-
         // VALIDASI ULANG JIKA MAX KELAS PER HARI LEBIH DARI 3 MAKA HAPUS PENGAMPU INDEX SEKARANG  DAN TAMBAHKAN KE INDEX TERAKHIR
         foreach ($genereateJadwal as $key => $value) {
             $count_kelas_now = 0;
@@ -282,6 +268,20 @@ class PenjadwalanController extends Controller
             if ($count_kelas_now > $max_kelas_per_hari) {
                 $pengampu->push($value);
                 $pengampu->forget($key);
+            }
+        }
+
+        // VALIDASI ULANG JIKA HARI SAMA, DIJAM MULAI YANG SAMA DAN RUANG SAMA MAKA GANTI RUANGAN YANG TIDAK SAMA 
+        foreach ($genereateJadwal as $key => $value) {
+            foreach ($genereateJadwal as $key2 => $value2) {
+                if ($key != $key2) {
+                    if ($value['day'] == $value2['day'] && $value['start_time'] == $value2['start_time'] && $value['ruang_id'] == $value2['ruang_id']) {
+                        // DAPATKAN RUANGAN DI HARI YANG SAMA
+                        $ruang_not_available = collect($genereateJadwal)->where('day', $value['day'])->where('start_time', $value['start_time'])->where('ruang_id', '!=', $value['ruang_id'])->pluck('ruang_id')->toArray();
+                        $ruang_sesuai_update = Ruang::whereNotIn('kode_ruang', $ruang_not_available)->InRandomOrder()->first();
+                        $genereateJadwal[$key2]['ruang_id'] = $ruang_sesuai_update->kode_ruang;
+                    }
+                }
             }
         }
 
