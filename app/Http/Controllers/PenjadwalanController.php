@@ -19,7 +19,8 @@ class PenjadwalanController extends Controller
      */
     public function index()
     {
-        $semua_penjadwalan = Penjadwalan::all();
+        // SORTING BERDASARKAN HARI DAN JAM MULAI
+        $semua_penjadwalan = Penjadwalan::orderBy('day', 'DESC')->orderBy('start_time', 'ASC')->get();
         
         return view('dashboard.penjadwalan.index', compact('semua_penjadwalan'));
     }
@@ -253,7 +254,36 @@ class PenjadwalanController extends Controller
             }
         }
 
-        // dd($genereateJadwal);
+        // VALIDASI ULANG JIKA HARI SAMA, DIJAM MULAI YANG SAMA DAN RUANG SAMA MAKA GANTI RUANGAN YANG TIDAK SAMA 
+        foreach ($genereateJadwal as $key => $value) {
+            foreach ($genereateJadwal as $key2 => $value2) {
+                if ($key != $key2) {
+                    if ($value['day'] == $value2['day'] && $value['start_time'] == $value2['start_time'] && $value['ruang_id'] == $value2['ruang_id']) {
+                        // DAPATKAN RUANGAN DI HARI YANG SAMA
+                        $ruang_not_available = collect($genereateJadwal)->where('day', $value['day'])->where('start_time', $value['start_time'])->where('ruang_id', '!=', $value['ruang_id'])->pluck('ruang_id')->toArray();
+                        $ruang_sesuai_update = Ruang::whereNotIn('kode_ruang', $ruang_not_available)->InRandomOrder()->first();
+                        $genereateJadwal[$key2]['ruang_id'] = $ruang_sesuai_update->kode_ruang;
+                    }
+                }
+            }
+        }
+
+        // VALIDASI ULANG JIKA MAX KELAS PER HARI LEBIH DARI 3 MAKA HAPUS PENGAMPU INDEX SEKARANG  DAN TAMBAHKAN KE INDEX TERAKHIR
+        foreach ($genereateJadwal as $key => $value) {
+            $count_kelas_now = 0;
+            foreach ($genereateJadwal as $key2 => $value2) {
+                if ($key != $key2) {
+                    if ($value['day'] == $value2['day'] && $value['kelas_id'] == $value2['kelas_id']) {
+                        $count_kelas_now++;
+                    }
+                }
+            }
+
+            if ($count_kelas_now >= $max_kelas_per_hari) {
+                $pengampu->push($value);
+                $pengampu->forget($key);
+            }
+        }
 
         foreach ($genereateJadwal as $key => $value) {
             $create = [
